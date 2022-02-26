@@ -1,0 +1,12 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/SandhyR/TheBridge
+build-by-default: true
+branches:
+- main
+projects:
+  TheBridge:
+    path: ""
+    libs:
+      - src: CortexPE/Commando/Commando
+        version: ^3.0.0
+        branch: PM4
+...
