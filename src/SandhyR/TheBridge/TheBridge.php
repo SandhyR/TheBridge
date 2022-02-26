@@ -4,6 +4,7 @@ namespace SandhyR\TheBridge;
 
 use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
+use pocketmine\player\Player;
 use SandhyR\TheBridge\command\TheBridgeCommand;
 use SandhyR\TheBridge\game\Game;
 use SandhyR\TheBridge\utils\Utils;
@@ -32,6 +33,7 @@ class TheBridge extends PluginBase{
             PacketHooker::register($this);
         }
         @mkdir($this->getDataFolder() . "arenas/");
+        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getCommandMap()->register("thebridge", new TheBridgeCommand($this, "thebridge", "TheBridge Command", ["tb"]));
         foreach (glob($this->getDataFolder() . "arenas/*.json") as $location) {
             $fileContents = file_get_contents($location);
@@ -63,5 +65,18 @@ class TheBridge extends PluginBase{
     /** @return Game[] */
     public function getGames(): array{
         return $this->game;
+    }
+
+    /**
+     * @param Player $player
+     * @return Game|null
+     */
+    public function getPlayerGame(Player $player): ?Game{
+        foreach ($this->getGames() as $game){
+            if($game->isInGame($player)){
+                return $game;
+            }
+        }
+        return null;
     }
 }

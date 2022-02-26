@@ -13,7 +13,7 @@ class SetWorldSubCommand extends BaseSubCommand{
     public function prepare(): void
     {
         $this->registerArgument(0, new RawStringArgument("arena", false));
-        $this->setPermission("bedwars.set");
+        $this->setPermission("thebridge.set");
     }
 
     /**

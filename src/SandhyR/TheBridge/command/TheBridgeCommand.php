@@ -6,7 +6,9 @@ use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use SandhyR\TheBridge\command\subcommands\CreateSubCommand;
 use SandhyR\TheBridge\command\subcommands\HelpSubCommand;
+use SandhyR\TheBridge\command\subcommands\JoinSubCommand;
 use SandhyR\TheBridge\command\subcommands\ReloadSubCommand;
+use SandhyR\TheBridge\command\subcommands\SetGoalSubCommand;
 use SandhyR\TheBridge\command\subcommands\SetSpawnSubCommand;
 use SandhyR\TheBridge\command\subcommands\SetWorldSubCommand;
 
@@ -17,8 +19,9 @@ class TheBridgeCommand extends BaseCommand{
         $this->registerSubCommand(new HelpSubCommand("help", "Help Command"));
         $this->registerSubCommand(new CreateSubCommand("create", "Create arena command"));
         $this->registerSubCommand(new SetSpawnSubCommand("setspawn", "Setspawn position command"));
-        $this->registerSubCommand(new SetSpawnSubCommand("setgoal", "Set goal position command"));
+        $this->registerSubCommand(new SetGoalSubCommand("setgoal", "Set goal position command"));
         $this->registerSubCommand(new SetWorldSubCommand("setworld", "Set world arena"));
+        $this->registerSubCommand(new JoinSubCommand("join", "Join to arena"));
         $this->registerSubCommand(new ReloadSubCommand("reload", "Reload arenas"));
     }
 

@@ -14,7 +14,7 @@ class SetSpawnSubCommand extends BaseSubCommand{
     {
         $this->registerArgument(0, new RawStringArgument("arena", false));
         $this->registerArgument(1, new RawStringArgument("team", false));
-        $this->setPermission("bedwars.set");
+        $this->setPermission("thebridge.set");
     }
 
     /**

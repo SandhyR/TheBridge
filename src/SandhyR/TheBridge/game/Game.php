@@ -2,13 +2,20 @@
 
 namespace SandhyR\TheBridge\game;
 
+use pocketmine\block\VanillaBlocks;
+use pocketmine\item\VanillaItems;
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\math\Vector3;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 use SandhyR\TheBridge\task\GameTask;
 use SandhyR\TheBridge\TheBridge;
+use SandhyR\TheBridge\utils\Scoreboard;
 use SandhyR\TheBridge\utils\Utils;
 
 class Game{
@@ -23,10 +30,16 @@ class Game{
     private Task $task;
 
     /** @var string */
-    private string $phase = "OFFLINE";
+    public string $phase = "OFFLINE";
 
     /** @var Player[] */
-    private array $players;
+    private array $players = [];
+
+    /** @var Vector3[] */
+    public array $placedblock = [];
+
+    /** @var string[] */
+    private array $teams = [];
 
     /**
      * @param Vector3|null $bluespawn
@@ -135,9 +148,17 @@ class Game{
     }
 
     public function tick(): void{
-        switch ($this->phase){
+        switch ($this->phase) {
             case "LOBBY":
-
+                    foreach ($this->players as $player) {
+                        if ($player->isOnline()) {
+                            $scoreboard = Scoreboard::getInstance();
+                            $scoreboard->new($player, "Thebridge", TextFormat::YELLOW . TextFormat::BOLD .  "THE BRIDGE");
+                            $scoreboard->setLine($player, 1, " ");
+                            $scoreboard->setLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
+                        }
+                    }
+                    break;
         }
     }
 
@@ -146,7 +167,62 @@ class Game{
      * @return void
      */
     public function addPlayer(Player $player): void{
+        if(count($this->players) == 2){
+            return;
+        }
+
         $this->players[strtolower($player->getName())] = $player;
+        $player->setGamemode(GameMode::ADVENTURE());
+        $this->teams[strtolower($player->getName())] = $this->getTeam();
+        $player->teleport(Position::fromObject($this->arenainfo[$this->getTeam() . "spawn"], Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])));
+        $player->getInventory()->clearAll();
+        $player->setHealth(20);
+        $player->getHungerManager()->setFood(20);
+        $player->getInventory()->setItem(8, VanillaItems::WHITE_BED()->setCustomName("Leave"));
+        if(count($this->players) == 2){
+            $this->phase = "COUNTDOWN";
+        }
     }
 
+    private function getTeam(){
+        if(count($this->players) == 1){
+            return "red";
+        }
+        return "blue";
+    }
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function isInGame(Player $player): bool{
+        return isset($this->players[strtolower($player->getName())]);
+    }
+
+    /**
+     * @param Player $player
+     * @return void
+     */
+    public function removePlayer(Player $player): void{
+        unset($this->players[strtolower($player->getName())]);
+    }
+
+    private function stop(){
+        //remove all placed block
+        foreach ($this->placedblock as $pos){
+            Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])->setBlock($pos, VanillaBlocks::AIR());
+        }
+    }
+
+    public function broadcastMessage(Player $player, string $message){
+        foreach ($this->players as $p){
+            $p->sendMessage($this->getTeamFormat($player) . " " . TextFormat::WHITE . $player->getName() . ": " . $message);
+        }
+    }
+
+    private function getTeamFormat(Player $player){
+        if($this->teams[strtolower($player->getName())] == "blue"){
+            return TextFormat::BLUE . "[BLUE]";
+        }
+        return TextFormat::RED . "[RED]";}
 }
