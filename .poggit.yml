@@ -5,7 +5,7 @@ branches:
 projects:
   TheBridge:
     path: ""
-  libs:
+    libs:
       - src: CortexPE/Commando/Commando
         version: ^3.0.0
         branch: PM4
