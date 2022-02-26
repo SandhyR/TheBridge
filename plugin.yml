@@ -4,13 +4,6 @@ author: SandhyR
 api: 4.0.0
 version: 1.0
 
-commands:
-  thebridge:
-    usage: /thebridge help
-    permission: thebridge.use
-
 permissions:
-  thebridge.use:
-    default: true
   thebridge.set:
     default: op

@@ -2,12 +2,31 @@
 
 namespace SandhyR\TheBridge\game;
 
+use pocketmine\player\Player;
+use pocketmine\scheduler\Task;
+use pocketmine\utils\Config;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
+use SandhyR\TheBridge\task\GameTask;
+use SandhyR\TheBridge\TheBridge;
+use SandhyR\TheBridge\utils\Utils;
 
 class Game{
 
+    /** @var bool */
+    private bool $start = false;
+
     /** @var array */
     private array $arenainfo;
+
+    /** @var Task */
+    private Task $task;
+
+    /** @var string */
+    private string $phase = "OFFLINE";
+
+    /** @var Player[] */
+    private array $players;
 
     /**
      * @param Vector3|null $bluespawn
@@ -25,7 +44,9 @@ class Game{
         $this->arenainfo["redgoal"] = $redgoal;
         $this->arenainfo["worldname"] = $worldname;
         $this->arenainfo["arenaname"] = $arenaname;
-
+        if($this->isValidArena()) {
+            $this->startArena();
+        }
     }
 
     /** 
@@ -37,4 +58,95 @@ class Game{
         }
         return false;
     }
+
+    /**
+     * @param string $team
+     * @param Vector3 $pos
+     */
+    public function setSpawnPos(string $team, Vector3 $pos){
+        $this->arenainfo[$team . "spawn"] = $pos;
+    }
+
+    /**
+     * @param string $team
+     * @param Vector3 $pos
+     */
+    public function setGoalPos(string $team, Vector3 $pos){
+        $this->arenainfo[$team . "goal"] = $pos;
+    }
+
+    /**
+     * @param World $world
+     */
+    public function setWorld(World $world){
+        $this->arenainfo["worldname"] = $world->getFolderName();
+    }
+
+    private function startArena(){
+        $this->start = true;
+        $this->phase = "LOBBY";
+        TheBridge::getInstance()->getScheduler()->scheduleRepeatingTask($this->task = new GameTask($this), 20);
+    }
+
+    /**
+     * @param bool $lobby
+     * @return bool
+     */
+    public function isRunning(bool $lobby = true): bool
+    {
+        if ($lobby) {
+            return $this->start && $this->phase == "LOBBY";
+        }
+        return $this->start;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArenaInfo(): array{
+        $arr = [];
+        foreach ($this->arenainfo as $i => $k){
+            if($k instanceof Vector3){
+                $arr[$i] = Utils::vectorToString($k);
+            } else {
+                $arr[$i] = $k;
+            }
+        }
+        return $arr;
+    }
+
+    /**
+     * Save all arena data
+     * @return void
+     */
+    public function reload(): void{
+        $config = new Config(TheBridge::getInstance()->getDataFolder() . "arenas/" . $this->arenainfo["arenaname"] . ".json", Config::JSON, $this->getArenaInfo());
+        try {
+            $config->save();
+        } catch (\JsonException){}
+        if($this->isValidArena()){
+            $this->startArena();
+        }
+    }
+
+    /** @return string */
+    public function getName(): string{
+        return $this->arenainfo["arenaname"];
+    }
+
+    public function tick(): void{
+        switch ($this->phase){
+            case "LOBBY":
+
+        }
+    }
+
+    /**
+     * @param Player $player
+     * @return void
+     */
+    public function addPlayer(Player $player): void{
+        $this->players[strtolower($player->getName())] = $player;
+    }
+
 }

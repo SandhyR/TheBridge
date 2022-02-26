@@ -8,12 +8,11 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use SandhyR\TheBridge\TheBridge;
 
-class SetSpawnSubCommand extends BaseSubCommand{
+class SetWorldSubCommand extends BaseSubCommand{
 
     public function prepare(): void
     {
         $this->registerArgument(0, new RawStringArgument("arena", false));
-        $this->registerArgument(1, new RawStringArgument("team", false));
         $this->setPermission("bedwars.set");
     }
 
@@ -36,12 +35,7 @@ class SetSpawnSubCommand extends BaseSubCommand{
             $sender->sendMessage("Arena " . $args["arena"] . " Not found!");
             return;
         }
-
-        if(!in_array(strtolower($args["team"]), ["blue", "red"])) {
-            $sender->sendMessage($args["team"] . " Team not found use red or blue!");
-            return;
-        }
-        TheBridge::getInstance()->getGame($args["arena"])->setSpawnPos(strtolower($args["team"]), $sender->getPosition()->asVector3());
-        $sender->sendMessage("Succesfully set " .  strtolower($args["team"]) . " spawn point");
+        TheBridge::getInstance()->getGame($args["arena"])->setWorld($sender->getWorld());
+        $sender->sendMessage("Succesfully set " . $sender->getWorld()->getFolderName() . " as world arena");
     }
 }

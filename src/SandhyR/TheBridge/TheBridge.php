@@ -6,6 +6,7 @@ use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
 use SandhyR\TheBridge\command\TheBridgeCommand;
 use SandhyR\TheBridge\game\Game;
+use SandhyR\TheBridge\utils\Utils;
 
 class TheBridge extends PluginBase{
 
@@ -27,10 +28,16 @@ class TheBridge extends PluginBase{
 
     public function onEnable(): void
     {
-        if(!PacketHooker::isRegistered()){
+        if (!PacketHooker::isRegistered()) {
             PacketHooker::register($this);
         }
+        @mkdir($this->getDataFolder() . "arenas/");
         $this->getServer()->getCommandMap()->register("thebridge", new TheBridgeCommand($this, "thebridge", "TheBridge Command", ["tb"]));
+        foreach (glob($this->getDataFolder() . "arenas/*.json") as $location) {
+            $fileContents = file_get_contents($location);
+            $json = json_decode($fileContents, true);
+            $this->game[$json["arenaname"]] = new Game(Utils::stringToVector(":", $json["bluespawn"]), Utils::stringToVector(":", $json["redspawn"]), Utils::stringToVector(":", $json["bluegoal"]), Utils::stringToVector(":", $json["redgoal"]), $json["worldname"], $json["arenaname"]);
+        }
     }
 
     /**
@@ -51,5 +58,10 @@ class TheBridge extends PluginBase{
      */
     public function getGame(string $name): ?Game{
         return $this->game[$name] ?? null;
+    }
+
+    /** @return Game[] */
+    public function getGames(): array{
+        return $this->game;
     }
 }

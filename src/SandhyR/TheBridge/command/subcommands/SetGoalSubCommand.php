@@ -8,7 +8,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use SandhyR\TheBridge\TheBridge;
 
-class SetSpawnSubCommand extends BaseSubCommand{
+class SetGoalSubCommand extends BaseSubCommand{
 
     public function prepare(): void
     {
@@ -41,7 +41,7 @@ class SetSpawnSubCommand extends BaseSubCommand{
             $sender->sendMessage($args["team"] . " Team not found use red or blue!");
             return;
         }
-        TheBridge::getInstance()->getGame($args["arena"])->setSpawnPos(strtolower($args["team"]), $sender->getPosition()->asVector3());
-        $sender->sendMessage("Succesfully set " .  strtolower($args["team"]) . " spawn point");
+        TheBridge::getInstance()->getGame($args["arena"])->setGoalPos(strtolower($args["team"]), $sender->getPosition()->asVector3());
+        $sender->sendMessage("Succesfully set " .  strtolower($args["team"]) . " goal position");
     }
 }
