@@ -14,10 +14,18 @@ class CreateSubCommand extends BaseSubCommand{
         $this->registerArgument(0 ,new RawStringArgument("arena"));
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $aliasUsed
+     * @param array $args
+     * @return void
+     */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
        if(!TheBridge::getInstance()->createArena($args["arena"])){
-
+           $sender->sendMessage("Arena " . $args["arena"] . " Already exist!");
+           return;
        }
+       $sender->sendMessage("Succesfully create " . $args["arena"] . " Arena");
     }
 }

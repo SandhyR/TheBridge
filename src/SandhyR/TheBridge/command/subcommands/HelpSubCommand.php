@@ -12,6 +12,12 @@ class HelpSubCommand extends BaseSubCommand{
         //NOOP
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $aliasUsed
+     * @param array $args
+     * @return void
+     */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         $sender->sendMessage("TheBridge §aCommands");

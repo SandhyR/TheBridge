@@ -15,6 +15,12 @@ class TheBridgeCommand extends BaseCommand{
         $this->registerSubCommand(new CreateSubCommand("create"));
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $aliasUsed
+     * @param array $args
+     * @return void
+     */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         $this->sendUsage();
