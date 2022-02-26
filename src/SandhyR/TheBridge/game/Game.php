@@ -53,7 +53,7 @@ class Game{
      * @return bool
      */
     public function isValidArena(): bool{
-        if ($this->arenainfo["bluespawn"] instanceof Vector3 and $this->arenainfo["redspawn"] instanceof Vector3 and $this->arenainfo["bluegoal"] instanceof Vector3 and $this->arenainfo["redgoal"] instanceof Vector3 and is_string($this->arenainfo["worldname"] and is_string($this->arenainfo["arenaname"]))){
+        if (($this->arenainfo["bluespawn"] instanceof Vector3) and ($this->arenainfo["redspawn"] instanceof Vector3) and ($this->arenainfo["bluegoal"] instanceof Vector3) and ($this->arenainfo["redgoal"] instanceof Vector3) and (is_string($this->arenainfo["worldname"]) and (is_string($this->arenainfo["arenaname"])))){
             return true;
         }
         return false;
