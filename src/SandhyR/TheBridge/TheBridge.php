@@ -15,7 +15,7 @@ class TheBridge extends PluginBase{
     private static TheBridge $instance;
 
     /** @var Game[] */
-    private array $game;
+    private array $game = [];
 
     /** @return TheBridge */
     public static function getInstance(): TheBridge{
@@ -39,6 +39,16 @@ class TheBridge extends PluginBase{
             $fileContents = file_get_contents($location);
             $json = json_decode($fileContents, true);
             $this->game[$json["arenaname"]] = new Game(Utils::stringToVector(":", $json["bluespawn"]), Utils::stringToVector(":", $json["redspawn"]), Utils::stringToVector(":", $json["bluegoal"]), Utils::stringToVector(":", $json["redgoal"]), $json["worldname"], $json["arenaname"]);
+            if(is_string($json["worldname"])) {
+                $this->getServer()->getWorldManager()->loadWorld($json["worldname"]);
+            }
+        }
+    }
+
+    protected function onDisable(): void
+    {
+        foreach ($this->getGames() as $game){
+            $game->stop();
         }
     }
 

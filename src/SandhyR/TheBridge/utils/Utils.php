@@ -3,6 +3,8 @@
 namespace SandhyR\TheBridge\utils;
 
 use pocketmine\math\Vector3;
+use pocketmine\color\Color;
+use pocketmine\utils\TextFormat;
 
 class Utils{
 
@@ -26,5 +28,58 @@ class Utils{
             return new Vector3($split[0], $split[1], $split[2]);
         }
         return null;
+    }
+
+    /**
+     * @param string $color
+     * @return Color
+     */
+    public static function colorIntoObject(string $color) : Color{
+        $replace = [
+            'red' => [225, 0, 0],
+            'blue' => [0, 0, 225]
+        ];
+
+        $a = $replace[$color];
+        return new Color($a[0], $a[1], $a[2]);
+    }
+
+    public static function teamToMeta(string $team)
+    {
+        $meta = [
+            'red' => 14,
+            'blue' => 11
+        ];
+
+        return $meta[$team];
+    }
+
+    /**
+     * @param int $int
+     * @return string
+     */
+    public static function intToString(int $int) : string
+    {
+        $mins = floor($int / 60);
+        $seconds = floor($int % 60);
+        return (($mins < 10 ? "0" : "") . $mins . ":" . ($seconds < 10 ? "0" : "") . $seconds);
+    }
+
+    /**
+     * @param int $goal
+     * @return string
+     */
+    public static function intToPoint(int $goal): string{
+        return str_repeat(TextFormat::GREEN . "⬬", $goal) . str_repeat(TextFormat::GRAY . "⬬", 5 - $goal);
+    }
+
+    /**
+     * @param string $team
+     * @return string
+     */
+    public static function getEnemyTeam(string $team): string{
+        //wtf is this
+        $teamlist = ["blue" => "red", "red" => "blue"];
+        return $teamlist[$team];
     }
 }

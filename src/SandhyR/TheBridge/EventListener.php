@@ -8,10 +8,12 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 use SandhyR\TheBridge\game\Game;
-use SandhyR\TheBridge\utils\Scoreboard;
 use SandhyR\TheBridge\utils\Utils;
 
 class EventListener implements Listener{
@@ -21,7 +23,6 @@ class EventListener implements Listener{
      */
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
-        if(isset(Scoreboard::getInstance()->scoreboards[$player->getName()])) unset(Scoreboard::getInstance()->scoreboards[$player->getName()]);
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
             $game->removePlayer($player);
         }
@@ -57,6 +58,7 @@ class EventListener implements Listener{
         $player = $event->getPlayer();
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
             $event->cancel();
+            $event->getPlayer()->getHungerManager()->setFood(20);
         }
     }
 
@@ -76,9 +78,35 @@ class EventListener implements Listener{
 
     public function onChat(PlayerChatEvent $event){
         $player = $event->getPlayer();
-        if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
+        if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game) {
             $game->broadcastMessage($player, $event->getMessage());
             $event->cancel();
+        }
+    }
+
+    /**
+     * @param PlayerMoveEvent $event
+     */
+    public function onMove(PlayerMoveEvent $event){
+        $player = $event->getPlayer();
+        if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game) {
+            if($game->phase !== "RUNNING"){
+                return;
+            }
+            /** @var Vector3 $owngoal */
+            $owngoal = $game->getPureArenaInfo()[$game->getTeam($player) . "goal"];
+            /** @var Vector3 $enemygoal */
+            $enemygoal = $game->getPureArenaInfo()[Utils::getEnemyTeam($game->getTeam($player)) . "goal"];
+            if($player->getLocation()->distance($owngoal) <= 3){
+                $player->sendMessage(TextFormat::RED . "You cant score to own goal!");
+                $game->respawnPlayer($player, true);
+                return;
+            }
+
+            if($player->getLocation()->distance($enemygoal) <= 3){
+                $game->addGoal($player);
+                $game->sendAllCage();
+            }
         }
     }
 }

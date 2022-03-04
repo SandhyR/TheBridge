@@ -2,7 +2,14 @@
 
 namespace SandhyR\TheBridge\game;
 
+use jackmd\scorefactory\ScoreFactory;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\item\enchantment\VanillaEnchantments;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
@@ -12,13 +19,14 @@ use pocketmine\utils\Config;
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
+use pocketmine\world\sound\PopSound;
 use pocketmine\world\World;
 use SandhyR\TheBridge\task\GameTask;
 use SandhyR\TheBridge\TheBridge;
-use SandhyR\TheBridge\utils\Scoreboard;
 use SandhyR\TheBridge\utils\Utils;
 
-class Game{
+class Game
+{
 
     /** @var bool */
     private bool $start = false;
@@ -26,8 +34,8 @@ class Game{
     /** @var array */
     private array $arenainfo;
 
-    /** @var Task */
-    private Task $task;
+    /** @var Task|null */
+    private ?Task $task = null;
 
     /** @var string */
     public string $phase = "OFFLINE";
@@ -40,6 +48,21 @@ class Game{
 
     /** @var string[] */
     private array $teams = [];
+
+    /** @var int */
+    private int $countdown = 15;
+
+    /** @var bool */
+    private bool $cage = false;
+
+    /** @var int */
+    private int $cagecountdown = 5;
+
+    /** @var array */
+    private array $playerinfo = [];
+
+    /** @var int */
+    private int $timer = 900; //15 minutes
 
     /**
      * @param Vector3|null $bluespawn
@@ -57,16 +80,17 @@ class Game{
         $this->arenainfo["redgoal"] = $redgoal;
         $this->arenainfo["worldname"] = $worldname;
         $this->arenainfo["arenaname"] = $arenaname;
-        if($this->isValidArena()) {
+        if ($this->isValidArena()) {
             $this->startArena();
         }
     }
 
-    /** 
+    /**
      * @return bool
      */
-    public function isValidArena(): bool{
-        if (($this->arenainfo["bluespawn"] instanceof Vector3) and ($this->arenainfo["redspawn"] instanceof Vector3) and ($this->arenainfo["bluegoal"] instanceof Vector3) and ($this->arenainfo["redgoal"] instanceof Vector3) and (is_string($this->arenainfo["worldname"]) and (is_string($this->arenainfo["arenaname"])))){
+    public function isValidArena(): bool
+    {
+        if (($this->arenainfo["bluespawn"] instanceof Vector3) and ($this->arenainfo["redspawn"] instanceof Vector3) and ($this->arenainfo["bluegoal"] instanceof Vector3) and ($this->arenainfo["redgoal"] instanceof Vector3) and (is_string($this->arenainfo["worldname"]) and (is_string($this->arenainfo["arenaname"])))) {
             return true;
         }
         return false;
@@ -76,7 +100,8 @@ class Game{
      * @param string $team
      * @param Vector3 $pos
      */
-    public function setSpawnPos(string $team, Vector3 $pos){
+    public function setSpawnPos(string $team, Vector3 $pos)
+    {
         $this->arenainfo[$team . "spawn"] = $pos;
     }
 
@@ -84,18 +109,21 @@ class Game{
      * @param string $team
      * @param Vector3 $pos
      */
-    public function setGoalPos(string $team, Vector3 $pos){
+    public function setGoalPos(string $team, Vector3 $pos)
+    {
         $this->arenainfo[$team . "goal"] = $pos;
     }
 
     /**
      * @param World $world
      */
-    public function setWorld(World $world){
-        $this->arenainfo["worldname"] = $world->getFolderName();
+    public function setWorld(World $world)
+    {
+        $this->arenainfo["worldname"] = $world->getDisplayName();
     }
 
-    private function startArena(){
+    private function startArena()
+    {
         $this->start = true;
         $this->phase = "LOBBY";
         TheBridge::getInstance()->getScheduler()->scheduleRepeatingTask($this->task = new GameTask($this), 20);
@@ -116,10 +144,11 @@ class Game{
     /**
      * @return array
      */
-    public function getArenaInfo(): array{
+    public function getArenaInfo(): array
+    {
         $arr = [];
-        foreach ($this->arenainfo as $i => $k){
-            if($k instanceof Vector3){
+        foreach ($this->arenainfo as $i => $k) {
+            if ($k instanceof Vector3) {
                 $arr[$i] = Utils::vectorToString($k);
             } else {
                 $arr[$i] = $k;
@@ -132,70 +161,159 @@ class Game{
      * Save all arena data
      * @return void
      */
-    public function reload(): void{
+    public function reload(): void
+    {
         $config = new Config(TheBridge::getInstance()->getDataFolder() . "arenas/" . $this->arenainfo["arenaname"] . ".json", Config::JSON, $this->getArenaInfo());
         try {
             $config->save();
-        } catch (\JsonException){}
-        if($this->isValidArena()){
+        } catch (\JsonException) {
+        }
+        if ($this->isValidArena()) {
             $this->startArena();
         }
     }
 
     /** @return string */
-    public function getName(): string{
+    public function getName(): string
+    {
         return $this->arenainfo["arenaname"];
     }
 
-    public function tick(): void{
+    public function tick(): void
+    {
         switch ($this->phase) {
             case "LOBBY":
-                    foreach ($this->players as $player) {
-                        if ($player->isOnline()) {
-                            $scoreboard = Scoreboard::getInstance();
-                            $scoreboard->new($player, "Thebridge", TextFormat::YELLOW . TextFormat::BOLD .  "THE BRIDGE");
-                            $scoreboard->setLine($player, 1, " ");
-                            $scoreboard->setLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
-                        }
+                foreach ($this->players as $player) {
+                    if ($player->isOnline()) {
+                        ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
+                        ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
+                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
+                        ScoreFactory::setScoreLine($player, 3, "Waiting...");
+                        ScoreFactory::setScoreLine($player, 4, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 5, "Team: " . $this->getTeamScoreFormat($player));
+                        ScoreFactory::setScoreLine($player, 6, TextFormat::YELLOW . "yourservername.com");
+                        ScoreFactory::sendObjective($player);
+                        ScoreFactory::sendLines($player);
                     }
-                    break;
+                }
+                break;
+            case "COUNTDOWN":
+                foreach ($this->players as $player) {
+                    if ($player->isOnline()) {
+                        ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
+                        ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
+                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
+                        ScoreFactory::setScoreLine($player, 3, "Starting in " . TextFormat::GREEN . $this->countdown . "s");
+                        ScoreFactory::setScoreLine($player, 4, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 5, "Team: " . $this->getTeamScoreFormat($player));
+                        ScoreFactory::setScoreLine($player, 6, " ");
+                        ScoreFactory::setScoreLine($player, 7, TextFormat::YELLOW . "yourservername.com");
+                        ScoreFactory::sendObjective($player);
+                        ScoreFactory::sendLines($player);
+                    }
+                    if($this->countdown <= 5){
+                        $player->sendTitle(TextFormat::YELLOW . $this->countdown);
+                        $player->getWorld()->addSound($player->getPosition(),new PopSound());
+                    }
+                    if($this->countdown <= 0){
+                        $this->phase = "RUNNING";
+                        $this->respawnPlayer($player);
+                        $this->sendCage($this->arenainfo[$this->getTeam($player) . "spawn"], false, 2, 0, $this->getTeam($player));
+                        $this->cage = true;
+                    }
+                }
+                --$this->countdown;
+                break;
+            case "RUNNING":
+                foreach ($this->players as $player){
+                    if($this->cage) {
+                        $player->sendTitle("", TextFormat::GRAY . "Cages will open in " . TextFormat::GREEN . $this->cagecountdown);
+                        $player->getWorld()->addSound($player->getPosition(), new PopSound());
+                    }
+                    ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
+                    ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Time left: " . TextFormat::GREEN . Utils::intToString($this->timer));
+                    ScoreFactory::setScoreLine($player, 2, TextFormat::RED . TextFormat::BOLD . "[R]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("red", $this->teams)]["goals"]));
+                    ScoreFactory::setScoreLine($player, 3, TextFormat::BLUE . TextFormat::BOLD . "[B]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("blue", $this->teams)]["goals"]));
+                    ScoreFactory::setScoreLine($player, 4, TextFormat::WHITE . "Kills: " . TextFormat::GREEN . $this->playerinfo[strtolower($player->getName())]["kills"]);
+                    ScoreFactory::setScoreLine($player, 5, TextFormat::WHITE . "Goals: " . TextFormat::GREEN . $this->playerinfo[strtolower($player->getName())]["goals"]);
+                    ScoreFactory::setScoreLine($player, 6, TextFormat::WHITE . "Map: " . $this->arenainfo["arenaname"]);
+                    ScoreFactory::setScoreLine($player, 7, TextFormat::WHITE . "Mode: Solo");
+                    ScoreFactory::setScoreLine($player, 8, " ");
+                    ScoreFactory::setScoreLine($player, 9, TextFormat::YELLOW . "yourservername.com");
+                    ScoreFactory::sendObjective($player);
+                    ScoreFactory::sendLines($player);
+                }
+                if ($this->cagecountdown <= 0) {
+                    $this->cage = false;
+                    $this->cagecountdown = 5;
+                    $this->removeAllCages();
+                }
+                if($this->cage){
+                --$this->cagecountdown;
+                }
+
+                --$this->timer;
         }
+    }
+    /**
+     * @param Player $player
+     * @return void
+     */
+    public function addPlayer(Player $player): void
+    {
+        if (count($this->players) == 2) {
+            return;
+        }
+        $this->players[strtolower($player->getName())] = $player;
+        $this->playerinfo[strtolower($player->getName())] = ["kills" => 0, "goals" => 0];
+        $player->setGamemode(GameMode::ADVENTURE());
+        $this->setTeam($player);
+        $player->teleport(Position::fromObject($this->arenainfo[$this->getTeam($player) . "spawn"], Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])));
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
+        $player->setHealth(20);
+        $player->getHungerManager()->setFood(20);
+        $player->getInventory()->setItem(8, VanillaItems::WHITE_BED()->setCustomName("Leave"));
+        $this->broadcastCustomMessage($player->getName() . " Joined");
+        if (count($this->players) == 2) {
+            $this->phase = "COUNTDOWN";
+        }
+    }
+
+    /**
+     * @param Player $player
+     * @return string
+     */
+    public function getTeam(Player $player): string
+    {
+        return $this->teams[strtolower($player->getName())];
     }
 
     /**
      * @param Player $player
      * @return void
      */
-    public function addPlayer(Player $player): void{
-        if(count($this->players) == 2){
-            return;
-        }
-
-        $this->players[strtolower($player->getName())] = $player;
-        $player->setGamemode(GameMode::ADVENTURE());
-        $this->teams[strtolower($player->getName())] = $this->getTeam();
-        $player->teleport(Position::fromObject($this->arenainfo[$this->getTeam() . "spawn"], Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])));
-        $player->getInventory()->clearAll();
-        $player->setHealth(20);
-        $player->getHungerManager()->setFood(20);
-        $player->getInventory()->setItem(8, VanillaItems::WHITE_BED()->setCustomName("Leave"));
-        if(count($this->players) == 2){
-            $this->phase = "COUNTDOWN";
+    private function setTeam(Player $player): void{
+        if(count($this->teams) > 0) {
+            foreach ($this->teams as $k) {
+                if ($k == "red") {
+                    $this->teams[strtolower($player->getName())] = "blue";
+                } else {
+                    $this->teams[strtolower($player->getName())] = "red";
+                }
+            }
+        } else {
+            $this->teams[strtolower($player->getName())] = "red";
         }
     }
 
-    private function getTeam(){
-        if(count($this->players) == 1){
-            return "red";
-        }
-        return "blue";
-    }
 
     /**
      * @param Player $player
      * @return bool
      */
-    public function isInGame(Player $player): bool{
+    public function isInGame(Player $player): bool
+    {
         return isset($this->players[strtolower($player->getName())]);
     }
 
@@ -203,26 +321,182 @@ class Game{
      * @param Player $player
      * @return void
      */
-    public function removePlayer(Player $player): void{
-        unset($this->players[strtolower($player->getName())]);
+    public function removePlayer(Player $player): void
+    {
+        unset($this->players[strtolower($player->getName())], $this->teams[strtolower($player->getName())]);
+        $this->checkCountdown();
     }
 
-    private function stop(){
+
+    /**
+     * @return void
+     */
+    public function stop(): void
+    {
+        if ($this->task instanceof Task) {
+            $this->task->getHandler()->cancel();
+        }
         //remove all placed block
-        foreach ($this->placedblock as $pos){
+        foreach ($this->placedblock as $pos) {
             Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])->setBlock($pos, VanillaBlocks::AIR());
         }
+        $this->placedblock = [];
+        $this->teams = [];
+        $this->task = null;
+        $this->players = [];
     }
 
-    public function broadcastMessage(Player $player, string $message){
-        foreach ($this->players as $p){
-            $p->sendMessage($this->getTeamFormat($player) . " " . TextFormat::WHITE . $player->getName() . ": " . $message);
+    public function broadcastMessage(Player $player, string $message)
+    {
+        foreach ($this->players as $p) {
+            $p->sendMessage($this->getTeamChatFormat($player) . " " . TextFormat::WHITE . $player->getName() . ": " . $message);
         }
     }
 
-    private function getTeamFormat(Player $player){
-        if($this->teams[strtolower($player->getName())] == "blue"){
+    /**
+     * @param Player $player
+     * @return string
+     */
+    private function getTeamChatFormat(Player $player): string
+    {
+        if ($this->teams[strtolower($player->getName())] == "blue") {
             return TextFormat::BLUE . "[BLUE]";
         }
-        return TextFormat::RED . "[RED]";}
+        return TextFormat::RED . "[RED]";
+    }
+
+    /**
+     * @param Player $player
+     * @return string
+     */
+    private function getTeamScoreFormat(Player $player): string
+    {
+        if ($this->teams[strtolower($player->getName())] == "blue") {
+            return TextFormat::BLUE . "Blue";
+        }
+        return TextFormat::RED . "Red";
+    }
+
+    /**
+     * @param string $message
+     * @return void
+     */
+    public function broadcastCustomMessage(string $message): void{
+        foreach ($this->players as $p) {
+            $p->sendMessage($message);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function checkCountdown(): void{
+        if(count($this->players) < 2){
+            if($this->phase == "COUNTDOWN"){
+                $this->phase = "LOBBY";
+                $this->countdown = 15;
+            }
+        }
+    }
+
+    /**
+     * @param Player $player
+     * @return void
+     */
+    public function sendVictory(Player $player): void{
+        // TODO
+    }
+
+    /**
+     * @param Player $player
+     * @param bool $survival
+     * @return void
+     */
+    public function respawnPlayer(Player $player, bool $survival = false): void{
+        $player->teleport(Position::fromObject($this->arenainfo[$this->getTeam($player) . "spawn"], Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])));
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
+        if($survival){
+            $player->setGamemode(GameMode::SURVIVAL());
+        } else {
+            $player->setGamemode(GameMode::ADVENTURE());
+        }
+        $player->setHealth(20);
+        $player->getArmorInventory()->setChestplate(VanillaItems::LEATHER_TUNIC()->setCustomColor(Utils::colorIntoObject($this->getTeam($player))));
+        $player->getArmorInventory()->setLeggings(VanillaItems::LEATHER_PANTS()->setCustomColor(Utils::colorIntoObject($this->getTeam($player))));
+        $player->getArmorInventory()->setBoots(VanillaItems::LEATHER_BOOTS()->setCustomColor(Utils::colorIntoObject($this->getTeam($player))));
+        $player->getInventory()->setItem(0, VanillaItems::IRON_SWORD());
+        $player->getInventory()->setItem(1, VanillaItems::BOW()->addEnchantment(new EnchantmentInstance(VanillaEnchantments::POWER())));
+        $player->getInventory()->setItem(2, VanillaItems::DIAMOND_PICKAXE()->addEnchantment(new EnchantmentInstance(VanillaEnchantments::EFFICIENCY(),  2)));
+        $player->getInventory()->addItem(ItemFactory::getInstance()->get(ItemIds::TERRACOTTA, Utils::teamToMeta($this->getTeam($player)), 64  * 2));
+        $player->getInventory()->setItem(7, VanillaItems::GOLDEN_APPLE()->setCount(8));
+        $player->getInventory()->setItem(8, VanillaItems::ARROW());
+        $player->getHungerManager()->setFood(20);
+    }
+
+    /**
+     * @param Vector3 $pos
+     * @param bool $v
+     * @param int $dis
+     * @param int $ad
+     * @param string|null $team
+     * @return void
+     */
+    public function sendCage(Vector3 $pos, bool $v, int $dis, int $ad, ?string $team)
+    {
+        $world = Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"]);
+        $yy = $v ? 1 : 3;
+        $yy += $ad;
+        for ($x = $pos->getFloorX() - $dis; $x <= $pos->getFloorX() + $dis; $x++) {
+            for ($y = $pos->getFloorY() + $yy; $y >= $pos->getFloorY() - 1; $y--) {
+                for ($z = $pos->getFloorZ() + $dis; $z >= $pos->getFloorZ() - $dis; $z--) {
+                    if($v){
+                        $world->setBlockAt($x,$y,$z, VanillaBlocks::AIR());
+                    } else {
+                        $world->setBlockAt($x, $y, $z, BlockFactory::getInstance()->get(BlockLegacyIds::STAINED_GLASS, Utils::teamToMeta($team)));
+                    }
+                }
+            }
+        }
+        if(!$v){
+            $this->sendCage($pos->add(0, 1, 0), true, $dis - 1, $ad, $team);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function removeAllCages(): void{
+        $this->sendCage($this->arenainfo["bluespawn"], true, 2, 4, null);
+        $this->sendCage($this->arenainfo["redspawn"], true, 2, 4, null);
+        foreach ($this->players as $player){
+            $player->setGamemode(GameMode::SURVIVAL());
+            $player->sendTitle(TextFormat::GREEN . "FIGHT!");
+        }
+    }
+
+    public function addKill(Player $player){
+        ++$this->playerinfo[strtolower($player->getName())]["kills"];
+    }
+
+    public function addGoal(Player $player){
+        ++$this->playerinfo[strtolower($player->getName())]["goals"];
+    }
+
+    /**
+     * @return void
+     */
+    public function sendAllCage(): void{
+        foreach ($this->players as $player){
+            $this->respawnPlayer($player);
+            $this->sendCage($this->arenainfo[$this->getTeam($player) . "spawn"], false, 2, 0, $this->getTeam($player));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getPureArenaInfo(): array{
+        return $this->arenainfo;
+    }
 }
