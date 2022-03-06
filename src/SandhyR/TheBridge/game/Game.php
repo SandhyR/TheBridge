@@ -188,12 +188,12 @@ class Game
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
                         ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
-                        ScoreFactory::setScoreLine($player, 2, " ");
-                        ScoreFactory::setScoreLine($player, 3, TextFormat::Red . "Waiting for more players..");
-                        ScoreFactory::setScoreLine($player, 3, "      ");
-                        ScoreFactory::setScoreLine($player, 4, "Mode: " . TextFormat::GREEN . "Solo");
-                        ScoreFactory::setScoreLine($player, 5, "    ");
-                        ScoreFactory::setScoreLine($player, 6, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 3, " ");
+                        ScoreFactory::setScoreLine($player, 4, TextFormat::Red . "Waiting for more players..");
+                        ScoreFactory::setScoreLine($player, 5, "      ");
+                        ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 7, "    ");
+                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -205,12 +205,12 @@ class Game
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
                         ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
-                        ScoreFactory::setScoreLine($player, 2, "    ");
-                        ScoreFactory::setScoreLine($player, 3, "Starting in " . TextFormat::GREEN . $this->countdown . "s");
-                        ScoreFactory::setScoreLine($player, 4, "  ");
-                        ScoreFactory::setScoreLine($player, 4, "Mode: " . TextFormat::GREEN . "Solo");
-                        ScoreFactory::setScoreLine($player, 6, " ");
-                        ScoreFactory::setScoreLine($player, 7, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 3, "    ");
+                        ScoreFactory::setScoreLine($player, 4, "Starting in " . TextFormat::GREEN . $this->countdown . "s");
+                        ScoreFactory::setScoreLine($player, 5, "  ");
+                        ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 7, " ");
+                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
