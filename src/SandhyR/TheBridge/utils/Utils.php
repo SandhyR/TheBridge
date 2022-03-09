@@ -70,7 +70,7 @@ class Utils{
      * @return string
      */
     public static function intToPoint(int $goal): string{
-        return str_repeat(TextFormat::GREEN . "⬬", $goal) . str_repeat(TextFormat::GRAY . "⬬", 5 - $goal);
+        return str_repeat(TextFormat::GREEN . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
     }
 
     /**
