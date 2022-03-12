@@ -58,7 +58,7 @@ class EventListener implements Listener{
         $player = $event->getPlayer();
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
             $event->cancel();
-            $event->getPlayer()->getHungerManager()->setFood(20);
+            $event->getPlayer()->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
         }
     }
 
@@ -105,6 +105,7 @@ class EventListener implements Listener{
 
             if($player->getLocation()->distance($enemygoal) <= 3){
                 $game->addGoal($player);
+                $game->scoredname = $player->getName();
                 $game->sendAllCages();
             }
         }
