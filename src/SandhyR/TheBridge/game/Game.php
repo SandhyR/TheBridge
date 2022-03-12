@@ -21,6 +21,7 @@ use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\sound\PopSound;
 use pocketmine\world\World;
+use React\Promise\Util;
 use SandhyR\TheBridge\task\GameTask;
 use SandhyR\TheBridge\TheBridge;
 use SandhyR\TheBridge\utils\Utils;
@@ -232,7 +233,7 @@ class Game
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
                         if ($this->cage) {
-                            $player->sendTitle($this->scoredname ?? "", TextFormat::GRAY . "Cages will open in " . TextFormat::GREEN . $this->cagecountdown);
+                            $player->sendTitle($this->scoredname !== null ? Utils::teamToColor($this->teams[strtolower($this->scoredname)]) . $this->scoredname . TextFormat::GRAY . " scored" : "", TextFormat::GRAY . "Cages will open in " . TextFormat::GREEN . $this->cagecountdown);
                             $player->getWorld()->addSound($player->getPosition(), new PopSound());
                         }
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
@@ -421,7 +422,8 @@ class Game
      * @return void
      */
     public function sendVictory(Player $player): void{
-        $player->sendTitle(TextFormat::GOLD . "VICTORY!");
+        $this->phase = "RESTARTING";
+        $player->sendTitle(TextFormat::GOLD . TextFormat::BOLD . "VICTORY!");
     }
 
     /**
@@ -492,15 +494,29 @@ class Game
         }
     }
 
-    public function addKill(Player $player){
+    /**
+     * @param Player $player
+     * @return void
+     */
+    public function addKill(Player $player): void{
         ++$this->playerinfo[strtolower($player->getName())]["kills"];
     }
 
-    public function addGoal(Player $player){
-        ++$this->playerinfo[strtolower($player->getName())]["goals"];
-        if($this->playerinfo[strtolower($player->getName())]["goals"] >= 5){
-            $this->sendVictory($player);
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function addGoal(Player $player): bool{
+        if($this->playerinfo[strtolower($player->getName())]["goals"] <= 5) {
+            ++$this->playerinfo[strtolower($player->getName())]["goals"];
+            $this->broadcastCustomMessage(Utils::teamToColor($this->teams[strtolower($player->getName())]) . $player->getName() . TextFormat::GRAY  . " scored");
+            if ($this->playerinfo[strtolower($player->getName())]["goals"] >= 5) {
+                $this->sendVictory($player);
+                return false;
+            }
         }
+        return true;
     }
 
     /**

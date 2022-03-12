@@ -34,6 +34,13 @@ class EventListener implements Listener{
     public function onPlace(BlockPlaceEvent $event){
         $player = $event->getPlayer();
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
+            foreach (["red","blue"] as $team){
+                if($event->getBlock()->getPosition()->distance($game->getPureArenaInfo()[$team . "goal"]) < 10){
+                    $event->cancel();
+                    $player->sendMessage(TextFormat::RED . "You cant place block here!");
+                    return;
+                }
+            }
             $game->placedblock[Utils::vectorToString($event->getBlock()->getPosition()->asVector3())] = $event->getBlock()->getPosition()->asVector3();
         }
     }
@@ -69,8 +76,13 @@ class EventListener implements Listener{
         $player = $event->getEntity();
         if($player instanceof Player) {
             if (($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game) {
-                if($game->phase == "LOBBY" || $game->phase == "COUNTDOWN"){
+                if($game->phase == "LOBBY" || $game->phase == "COUNTDOWN" || $game->phase == "RESTARTING"){
                     $event->cancel();
+                    return;
+                }
+                if($event->getCause() == $event::CAUSE_FALL){
+                    $event->cancel();
+                    return;
                 }
             }
         }
@@ -103,10 +115,11 @@ class EventListener implements Listener{
                 return;
             }
 
-            if($player->getLocation()->distance($enemygoal) <= 3){
-                $game->addGoal($player);
-                $game->scoredname = $player->getName();
-                $game->sendAllCages();
+            if($player->getLocation()->distance($enemygoal) <= 3) {
+                if ($game->addGoal($player)) {
+                    $game->scoredname = $player->getName();
+                    $game->sendAllCages();
+                }
             }
         }
     }

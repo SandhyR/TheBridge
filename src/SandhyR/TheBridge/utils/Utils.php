@@ -82,4 +82,13 @@ class Utils{
         $teamlist = ["blue" => "red", "red" => "blue"];
         return $teamlist[$team];
     }
+
+    /**
+     * @param string $team
+     * @return string
+     */
+    public static function teamToColor(string $team): string{
+        $list = ["red" => TextFormat::RED , "blue" => TextFormat::DARK_BLUE];
+        return $list[$team];
+    }
 }
