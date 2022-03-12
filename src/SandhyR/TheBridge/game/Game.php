@@ -217,9 +217,7 @@ class Game
                     }
                     if($this->countdown <= 0){
                         $this->phase = "RUNNING";
-                        $this->respawnPlayer($player);
-                        $this->sendCage($this->arenainfo[$this->getTeam($player) . "spawn"], false, 2, 0, $this->getTeam($player));
-                        $this->cage = true;
+                        $this->sendAllCages();
                     }
                 }
                 --$this->countdown;
@@ -486,11 +484,12 @@ class Game
     /**
      * @return void
      */
-    public function sendAllCage(): void{
+    public function sendAllCages(): void{
         foreach ($this->players as $player){
             $this->respawnPlayer($player);
             $this->sendCage($this->arenainfo[$this->getTeam($player) . "spawn"], false, 2, 0, $this->getTeam($player));
         }
+        $this->cage = true;
     }
 
     /**

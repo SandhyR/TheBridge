@@ -105,7 +105,7 @@ class EventListener implements Listener{
 
             if($player->getLocation()->distance($enemygoal) <= 3){
                 $game->addGoal($player);
-                $game->sendAllCage();
+                $game->sendAllCages();
             }
         }
     }
