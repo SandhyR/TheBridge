@@ -68,7 +68,7 @@ class Game
     public ?string $scoredname = null;
 
     /** @var int */
-    private int $restartcountdown = 15;
+    private int $restartcountdown = 10;
 
     /**
      * @param Vector3|null $bluespawn
@@ -265,6 +265,9 @@ class Game
                     }
                     if($this->timer <= 0){
                         $this->phase = "RESTARTING";
+                        foreach ($this->players as $player){
+                            $player->setGamemode(GameMode::SURVIVAL());
+                        }
                     }
                     --$this->timer;
                     break;
@@ -290,12 +293,23 @@ class Game
                 }
                 --$this->restartcountdown;
                 if($this->restartcountdown <= 0){
-                    $this->restartcountdown = 15;
+                    $this->restartcountdown = 10;
+                    $game = 0;
                     foreach (TheBridge::getInstance()->getGames() as $games){
                         if($games->isRunning()){
+                            ++$game;
                             foreach ($this->players as $player){
                                 $games->addPlayer($player);
+                                $this->removePlayer($player);
+                                ScoreFactory::removeObjective($player);
                             }
+                        }
+                    }
+                    if($game <= 0 ){
+                        foreach ($this->players as $player){
+                            ScoreFactory::removeObjective($player);
+                            $player->sendMessage(TextFormat::RED . "No arena is running!");
+
                         }
                     }
                     $this->restart();
@@ -417,18 +431,6 @@ class Game
             return TextFormat::BLUE . "[BLUE]";
         }
         return TextFormat::RED . "[RED]";
-    }
-
-    /**
-     * @param Player $player
-     * @return string
-     */
-    private function getTeamScoreFormat(Player $player): string
-    {
-        if ($this->teams[strtolower($player->getName())] == "blue") {
-            return TextFormat::BLUE . "Blue";
-        }
-        return TextFormat::RED . "Red";
     }
 
     /**

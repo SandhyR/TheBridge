@@ -34,6 +34,11 @@ class EventListener implements Listener{
     public function onPlace(BlockPlaceEvent $event){
         $player = $event->getPlayer();
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
+            if($game->phase == "LOBBY" || $game->phase == "COUNTDOWN" || $game->phase == "RESTARTING"){
+                $event->cancel();
+                return;
+            }
+
             foreach (["red","blue"] as $team){
                 if($event->getBlock()->getPosition()->distance($game->getPureArenaInfo()[$team . "goal"]) < 10){
                     $event->cancel();
