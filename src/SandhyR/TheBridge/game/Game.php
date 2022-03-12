@@ -21,7 +21,6 @@ use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\sound\PopSound;
 use pocketmine\world\World;
-use React\Promise\Util;
 use SandhyR\TheBridge\task\GameTask;
 use SandhyR\TheBridge\TheBridge;
 use SandhyR\TheBridge\utils\Utils;
@@ -67,6 +66,9 @@ class Game
 
     /** @var string|null */
     public ?string $scoredname = null;
+
+    /** @var int */
+    private int $restartcountdown = 15;
 
     /**
      * @param Vector3|null $bluespawn
@@ -262,9 +264,40 @@ class Game
                         --$this->cagecountdown;
                     }
                     if($this->timer <= 0){
-                        $this->stop();
+                        $this->phase = "RESTARTING";
                     }
                     --$this->timer;
+            case "RESTARTING":
+                foreach ($this->players as $player) {
+                    if ($player->isOnline()) {
+                        ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
+                        ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Restarting in " . TextFormat::GREEN . $this->restartcountdown);
+                        ScoreFactory::setScoreLine($player, 2, " ");
+                        ScoreFactory::setScoreLine($player, 3, TextFormat::RED . TextFormat::BOLD . "[R]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("red", $this->teams)]["goals"]));
+                        ScoreFactory::setScoreLine($player, 4, TextFormat::BLUE . TextFormat::BOLD . "[B]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("blue", $this->teams)]["goals"]));
+                        ScoreFactory::setScoreLine($player, 5, "   ");
+                        ScoreFactory::setScoreLine($player, 6, TextFormat::WHITE . "Kills: " . TextFormat::GREEN . $this->playerinfo[strtolower($player->getName())]["kills"]);
+                        ScoreFactory::setScoreLine($player, 7, TextFormat::WHITE . "Goals: " . TextFormat::GREEN . $this->playerinfo[strtolower($player->getName())]["goals"]);
+                        ScoreFactory::setScoreLine($player, 8, "  ");
+                        ScoreFactory::setScoreLine($player, 9, TextFormat::WHITE . "Map: §a" . $this->arenainfo["arenaname"]);
+                        ScoreFactory::setScoreLine($player, 10, TextFormat::WHITE . "Mode: §aSolo");
+                        ScoreFactory::setScoreLine($player, 11, " ");
+                        ScoreFactory::setScoreLine($player, 12, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::sendObjective($player);
+                        ScoreFactory::sendLines($player);
+                    }
+                }
+                --$this->restartcountdown;
+                if($this->restartcountdown <= 0){
+                    $this->restartcountdown = 15;
+                    foreach (TheBridge::getInstance()->getGames() as $games){
+                        if($games->isRunning()){
+                            foreach ($this->players as $player){
+                                $games->addPlayer($player);
+                            }
+                        }
+                    }
+                }
         }
     }
     /**
@@ -357,6 +390,7 @@ class Game
             $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
             }
         }
+        $this->phase = "RESTARTING";
         $this->placedblock = [];
         $this->teams = [];
         $this->task = null;
