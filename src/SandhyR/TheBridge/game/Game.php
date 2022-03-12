@@ -267,6 +267,7 @@ class Game
                         $this->phase = "RESTARTING";
                     }
                     --$this->timer;
+                    break;
             case "RESTARTING":
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
@@ -297,6 +298,7 @@ class Game
                             }
                         }
                     }
+                    $this->restart();
                 }
         }
     }
@@ -390,7 +392,7 @@ class Game
             $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
             }
         }
-        $this->phase = "RESTARTING";
+        $this->phase = "OFFLINE";
         $this->placedblock = [];
         $this->teams = [];
         $this->task = null;
@@ -569,5 +571,13 @@ class Game
      */
     public function getPureArenaInfo(): array{
         return $this->arenainfo;
+    }
+
+    /**
+     * @return void
+     */
+    private function restart(): void{
+        $this->stop();
+        $this->startArena();
     }
 }
