@@ -5,6 +5,7 @@ namespace SandhyR\TheBridge;
 use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
 use pocketmine\player\Player;
+use pocketmine\utils\Config;
 use SandhyR\TheBridge\command\TheBridgeCommand;
 use SandhyR\TheBridge\game\Game;
 use SandhyR\TheBridge\utils\Utils;
