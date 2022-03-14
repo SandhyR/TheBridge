@@ -78,9 +78,9 @@ class Game
      * @param string|null $worldname
      * @param string|null $arenaname
      */
-    public function __construct(?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null, TheBridge $plugin)
+    public function __construct(TheBridge $plugin, ?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
     {
-        $this->plugin = $plugin;
+		$this->plugin = $plugin;
         $this->arenainfo["bluespawn"] = $bluespawn;
         $this->arenainfo["redspawn"] = $redspawn;
         $this->arenainfo["bluegoal"] = $bluegoal;
