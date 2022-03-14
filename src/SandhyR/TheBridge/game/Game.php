@@ -420,7 +420,7 @@ class Game
     public function broadcastMessage(Player $player, string $message)
     {
         foreach ($this->players as $p) {
-            $p->sendMessage($this->getTeamChatFormat($player) TextFormat::WHITE . ": " . $message);
+            $p->sendMessage($this->getTeamChatFormat($player) . TextFormat::WHITE . ": " . $message);
         }
     }
 
