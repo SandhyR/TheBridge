@@ -78,9 +78,9 @@ class Game
      * @param string|null $worldname
      * @param string|null $arenaname
      */
-    public function __construct(TheBridge $plugin, ?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
+    public function __construct(TheBridge $tb, ?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
     {
-	$this->plugin = $plugin;
+	$this->tb = $tb;
         $this->arenainfo["bluespawn"] = $bluespawn;
         $this->arenainfo["redspawn"] = $redspawn;
         $this->arenainfo["bluegoal"] = $bluegoal;
@@ -196,7 +196,7 @@ class Game
             case "LOBBY":
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
-                        $cfg = new Config($this->plugin->getDataFolder() . "config.yml", Config::YAML);
+                        $cfg = new Config($this->tb->getDataFolder() . "config.yml", Config::YAML);
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, "   ");
                         ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
@@ -215,7 +215,7 @@ class Game
             case "COUNTDOWN":
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
-                        $cfg = new Config($this->plugin->getDataFolder() . "config.yml", Config::YAML);
+                        $cfg = new Config($this->tb->getDataFolder() . "config.yml", Config::YAML);
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, "   ");
                         ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
@@ -246,7 +246,7 @@ class Game
                         if ($this->cage) {
                             $player->sendTitle($this->scoredname !== null ? Utils::teamToColor($this->teams[strtolower($this->scoredname)]) . $this->scoredname . TextFormat::GRAY . " scored" : "", TextFormat::GRAY . "Cages will open in " . TextFormat::GREEN . $this->cagecountdown);
                             $player->getWorld()->addSound($player->getPosition(), new PopSound());
-                            $cfg = new Config($this->plugin->getDataFolder() . "config.yml", Config::YAML);
+                            $cfg = new Config($this->tb->getDataFolder() . "config.yml", Config::YAML);
                         }
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Time left: " . TextFormat::GREEN . Utils::intToString($this->timer));
@@ -284,7 +284,7 @@ class Game
             case "RESTARTING":
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
-                        $cfg = new Config($this->plugin->getDataFolder() . "config.yml", Config::YAML);
+                        $cfg = new Config($this->tb->getDataFolder() . "config.yml", Config::YAML);
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Restarting in " . TextFormat::GREEN . $this->restartcountdown);
                         ScoreFactory::setScoreLine($player, 2, "    ");
