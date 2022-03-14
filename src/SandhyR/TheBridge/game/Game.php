@@ -200,7 +200,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 6, "      ");
                         ScoreFactory::setScoreLine($player, 7, "Mode: " . TextFormat::GREEN . "Solo");
                         ScoreFactory::setScoreLine($player, 8, "    ");
-                        ScoreFactory::setScoreLine($player, 9, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 9, " " . $cfg->get("LobbyScoreboard", "play.yourservername.com") . " ");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -218,7 +218,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 6, "  ");
                         ScoreFactory::setScoreLine($player, 7, "Mode: " . TextFormat::GREEN . "Solo");
                         ScoreFactory::setScoreLine($player, 8, " ");
-                        ScoreFactory::setScoreLine($player, 9, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 9, " " . $cfg->get("StartScoreboard", "play.yourservername.com") . " ");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -252,7 +252,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 9, TextFormat::WHITE . "Map: §a" . $this->arenainfo["arenaname"]);
                         ScoreFactory::setScoreLine($player, 10, TextFormat::WHITE . "Mode: §aSolo");
                         ScoreFactory::setScoreLine($player, 11, " ");
-                        ScoreFactory::setScoreLine($player, 12, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 12, " " . $cfg->get("GameScoreboard", "play.yourservername.com") . " ");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -288,7 +288,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 9, TextFormat::WHITE . "Map: §a" . $this->arenainfo["arenaname"]);
                         ScoreFactory::setScoreLine($player, 10, TextFormat::WHITE . "Mode: §aSolo");
                         ScoreFactory::setScoreLine($player, 11, " ");
-                        ScoreFactory::setScoreLine($player, 12, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 12, " " . $cfg->get("RestartScoreboard", "play.yourservername.com") . " ");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
