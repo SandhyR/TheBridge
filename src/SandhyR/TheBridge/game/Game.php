@@ -90,10 +90,6 @@ class Game
             $this->startArena();
         }
     }
-
-    public function getPlugin(){
-	return $this->plugin;
-    }
 	
     /**
      * @return bool
