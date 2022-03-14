@@ -420,7 +420,7 @@ class Game
     public function broadcastMessage(Player $player, string $message)
     {
         foreach ($this->players as $p) {
-            $p->sendMessage($this->getTeamChatFormat($player);
+            $p->sendMessage($this->getTeamChatFormat($player) TextFormat::WHITE . ": " . $message);
         }
     }
 
@@ -431,9 +431,9 @@ class Game
     private function getTeamChatFormat(Player $player): string
     {
         if ($this->teams[strtolower($player->getName())] == "blue") {
-            return TextFormat::BLUE . $player->getName() . ": " . TextFormat::WHITE . $message;
+            return TextFormat::BLUE . $player->getName();
         }
-        return TextFormat::RED . $player->getName() . ": " . TextFormat::WHITE . $message;
+        return TextFormat::RED . $player->getName();
     }
 
     /**
