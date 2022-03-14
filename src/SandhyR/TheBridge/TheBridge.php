@@ -9,6 +9,7 @@ use SandhyR\TheBridge\command\TheBridgeCommand;
 use SandhyR\TheBridge\game\Game;
 use SandhyR\TheBridge\utils\Utils;
 use libs\xenialdan\apibossbar\BossBar;
+use libs\xenialdan\apibossbar\DiverseBossBar;
 
 class TheBridge extends PluginBase{
 
