@@ -74,7 +74,7 @@ class Utils{
     }
     
     public static function BlueintToPoint(int $goal): string{
-        return str_repeat(TextFormat::BLUE . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
+        return str_repeat(TextFormat::DARK_BLUE . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
     }
 
     /**
