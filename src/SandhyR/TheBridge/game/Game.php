@@ -27,6 +27,8 @@ use SandhyR\TheBridge\utils\Utils;
 
 class Game
 {
+    /** @var TheBridge $plugin */
+    public $plugin;
 
     /** @var bool */
     private bool $start = false;
@@ -69,9 +71,6 @@ class Game
 
     /** @var int */
     private int $restartcountdown = 10;
-    
-    /** @var TheBridge $plugin */
-    public $plugin;
 
     /**
      * @param Vector3|null $bluespawn
