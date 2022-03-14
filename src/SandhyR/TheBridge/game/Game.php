@@ -69,6 +69,9 @@ class Game
 
     /** @var int */
     private int $restartcountdown = 10;
+    
+    /** @var TheBridge $plugin */
+    public $plugin;
 
     /**
      * @param Vector3|null $bluespawn
@@ -78,8 +81,9 @@ class Game
      * @param string|null $worldname
      * @param string|null $arenaname
      */
-    public function __construct(?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
+    public function __construct(TheBridge $plugin, ?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
     {
+        $this->plugin = $plugin;
         $this->arenainfo["bluespawn"] = $bluespawn;
         $this->arenainfo["redspawn"] = $redspawn;
         $this->arenainfo["bluegoal"] = $bluegoal;
@@ -89,6 +93,17 @@ class Game
         if ($this->isValidArena()) {
             $this->startArena();
         }
+    }
+    
+    public function bossbarText($player) {
+        $name = "§l§cThe§bBridge §cOn §bYour§cNetwork ";
+        $this->plugin->bossbar->setTitle($name);
+        $this->plugin->bossbar->setPercentage(100);
+        $this->plugin->bossbar->addPlayer($player);
+    }
+
+    public function removeBossBar($player) {
+        $this->plugin->bossbar->removePlayer($player);
     }
 
     /**
@@ -414,6 +429,7 @@ class Game
         $this->task = null;
         $this->players = [];
         $this->scoredname = null;
+        $this->removeBossbar($player);
     }
 
     public function broadcastMessage(Player $player, string $message)
