@@ -72,39 +72,6 @@ class TheBridge extends PluginBase{
     public function getGame(string $name): ?Game{
         return $this->game[$name] ?? null;
     }
-    
-    public function initConfig(){
-		if(!is_file($this->getDataFolder() . "config.yml")){
-			(new Config($this->getDataFolder() . "config.yml", Config::YAML, [
-				"LobbyScoreboard" => "play.yourservername.com",
-                "StartScoreboard" => "play.yourservername.com",
-                "GameScoreboard" => "play.yourservername.com",
-                "RestartScoreboard" => "play.yourservername.com"
-			]));
-		} else {
-			$cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-			$all = $cfg->getAll();
-			foreach ([
-				"LobbyScoreboard",
-                "StartScoreboard",
-                "GameScoreboard",
-                "RestartScoreboard"
-			] as $key){
-				if(!isset($all[$key])){
-					rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-					
-					(new Config($this->getDataFolder() . "config.yml", Config::YAML, [
-				            "LobbyScoreboard" => "play.yourservername.com",
-                            "StartScoreboard" => "play.yourservername.com",
-                            "GameScoreboard" => "play.yourservername.com",
-                            "RestartScoreboard" => "play.yourservername.com"
-					]));
-					
-					break;
-				}
-			}
-		}
-	}
 
     /** @return Game[] */
     public function getGames(): array{
