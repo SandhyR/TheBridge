@@ -24,6 +24,8 @@ use pocketmine\world\World;
 use SandhyR\TheBridge\task\GameTask;
 use SandhyR\TheBridge\TheBridge;
 use SandhyR\TheBridge\utils\Utils;
+use libs\xenialdan\apibossbar\BossBar;
+use libs\xenialdan\apibossbar\DiverseBossBar;
 
 class Game
 {
@@ -95,14 +97,15 @@ class Game
     }
     
     public function bossbarText($player) {
+        $this->bossbar = new BossBar();
         $name = "§l§cThe§bBridge §cOn §bYour§cNetwork ";
-        $this->plugin->bossbar->setTitle($name);
-        $this->plugin->bossbar->setPercentage(100);
-        $this->plugin->bossbar->addPlayer($player);
+        $this->bossbar->setTitle($name);
+        $this->bossbar->setPercentage(100);
+        $this->bossbar->addPlayer($player);
     }
 
     public function removeBossBar($player) {
-        $this->plugin->bossbar->removePlayer($player);
+        $this->bossbar->removePlayer($player);
     }
 
     /**
