@@ -1,6 +1,3 @@
 # THEBRIDGE CONFIG
-LobbyScoreboard: §eplay.yourservername.com
-StartScoreboard: §eplay.yourservername.com
-GameScoreboard: §eplay.yourservername.com
-RestartScoreboard: §eplay.yourservername.com
+ScoreboardIp: §eplay.yourservername.com
 # End of config
