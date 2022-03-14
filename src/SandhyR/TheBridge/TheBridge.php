@@ -35,7 +35,6 @@ class TheBridge extends PluginBase{
             PacketHooker::register($this);
         }
         @mkdir($this->getDataFolder() . "arenas/");
-        $this->bossbar = new BossBar();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getCommandMap()->register("thebridge", new TheBridgeCommand($this, "thebridge", "TheBridge Command", ["tb"]));
         foreach (glob($this->getDataFolder() . "arenas/*.json") as $location) {
