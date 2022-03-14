@@ -8,6 +8,7 @@ use pocketmine\player\Player;
 use SandhyR\TheBridge\command\TheBridgeCommand;
 use SandhyR\TheBridge\game\Game;
 use SandhyR\TheBridge\utils\Utils;
+use libs\xenialdan\apibossbar\BossBar;
 
 class TheBridge extends PluginBase{
 
@@ -33,6 +34,7 @@ class TheBridge extends PluginBase{
             PacketHooker::register($this);
         }
         @mkdir($this->getDataFolder() . "arenas/");
+        $this->bossbar = new BossBar();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getCommandMap()->register("thebridge", new TheBridgeCommand($this, "thebridge", "TheBridge Command", ["tb"]));
         foreach (glob($this->getDataFolder() . "arenas/*.json") as $location) {
