@@ -192,14 +192,15 @@ class Game
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
-                        ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
-                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
-                        ScoreFactory::setScoreLine($player, 3, " ");
-                        ScoreFactory::setScoreLine($player, 4, TextFormat::RED . "Waiting for more players..");
-                        ScoreFactory::setScoreLine($player, 5, "      ");
-                        ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
-                        ScoreFactory::setScoreLine($player, 7, "    ");
-                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 1, "   ");
+                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
+                        ScoreFactory::setScoreLine($player, 3, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
+                        ScoreFactory::setScoreLine($player, 4, " ");
+                        ScoreFactory::setScoreLine($player, 5, TextFormat::RED . "Waiting for more players..");
+                        ScoreFactory::setScoreLine($player, 6, "      ");
+                        ScoreFactory::setScoreLine($player, 7, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 8, "    ");
+                        ScoreFactory::setScoreLine($player, 9, TextFormat::YELLOW . "play.yourservername.com");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -209,14 +210,15 @@ class Game
                 foreach ($this->players as $player) {
                     if ($player->isOnline()) {
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
-                        ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
-                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
-                        ScoreFactory::setScoreLine($player, 3, "    ");
-                        ScoreFactory::setScoreLine($player, 4, "Starting in " . TextFormat::GREEN . $this->countdown . "s");
-                        ScoreFactory::setScoreLine($player, 5, "  ");
-                        ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
-                        ScoreFactory::setScoreLine($player, 7, " ");
-                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 1, "   ");
+                        ScoreFactory::setScoreLine($player, 2, TextFormat::WHITE . "Players: " . TextFormat::GREEN . count($this->players) . "/2");
+                        ScoreFactory::setScoreLine($player, 3, TextFormat::WHITE . "Map: " . TextFormat::GREEN . $this->arenainfo["arenaname"]);
+                        ScoreFactory::setScoreLine($player, 4, "    ");
+                        ScoreFactory::setScoreLine($player, 5, "Starting in " . TextFormat::GREEN . $this->countdown . "s");
+                        ScoreFactory::setScoreLine($player, 6, "  ");
+                        ScoreFactory::setScoreLine($player, 7, "Mode: " . TextFormat::GREEN . "Solo");
+                        ScoreFactory::setScoreLine($player, 8, " ");
+                        ScoreFactory::setScoreLine($player, 9, TextFormat::YELLOW . "play.yourservername.com");
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -240,7 +242,7 @@ class Game
                         }
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Time left: " . TextFormat::GREEN . Utils::intToString($this->timer));
-                        ScoreFactory::setScoreLine($player, 2, " ");
+                        ScoreFactory::setScoreLine($player, 2, "    ");
                         ScoreFactory::setScoreLine($player, 3, TextFormat::RED . TextFormat::BOLD . "[R]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("red", $this->teams)]["goals"]));
                         ScoreFactory::setScoreLine($player, 4, TextFormat::BLUE . TextFormat::BOLD . "[B]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("blue", $this->teams)]["goals"]));
                         ScoreFactory::setScoreLine($player, 5, "   ");
@@ -276,7 +278,7 @@ class Game
                     if ($player->isOnline()) {
                         ScoreFactory::setObjective($player, TextFormat::YELLOW . TextFormat::BOLD . "THE BRIDGE");
                         ScoreFactory::setScoreLine($player, 1, TextFormat::WHITE . "Restarting in " . TextFormat::GREEN . $this->restartcountdown);
-                        ScoreFactory::setScoreLine($player, 2, " ");
+                        ScoreFactory::setScoreLine($player, 2, "    ");
                         ScoreFactory::setScoreLine($player, 3, TextFormat::RED . TextFormat::BOLD . "[R]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("red", $this->teams)]["goals"]));
                         ScoreFactory::setScoreLine($player, 4, TextFormat::BLUE . TextFormat::BOLD . "[B]" . TextFormat::RESET . Utils::intToPoint($this->playerinfo[array_search("blue", $this->teams)]["goals"]));
                         ScoreFactory::setScoreLine($player, 5, "   ");
@@ -406,6 +408,7 @@ class Game
             $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
             }
         }
+        
         $this->phase = "OFFLINE";
         $this->placedblock = [];
         $this->teams = [];
@@ -417,7 +420,7 @@ class Game
     public function broadcastMessage(Player $player, string $message)
     {
         foreach ($this->players as $p) {
-            $p->sendMessage($this->getTeamChatFormat($player) . " " . TextFormat::WHITE . $player->getName() . ": " . $message);
+            $p->sendMessage($this->getTeamChatFormat($player);
         }
     }
 
@@ -428,9 +431,9 @@ class Game
     private function getTeamChatFormat(Player $player): string
     {
         if ($this->teams[strtolower($player->getName())] == "blue") {
-            return TextFormat::BLUE . "[BLUE]";
+            return TextFormat::BLUE . $player->getName() . ": " . TextFormat::WHITE . $message;
         }
-        return TextFormat::RED . "[RED]";
+        return TextFormat::RED . $player->getName() . ": " . TextFormat::WHITE . $message;
     }
 
     /**
