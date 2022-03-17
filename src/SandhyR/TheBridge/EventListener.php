@@ -4,6 +4,7 @@ namespace SandhyR\TheBridge;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -12,6 +13,7 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat;
 use SandhyR\TheBridge\game\Game;
 use SandhyR\TheBridge\utils\Utils;
@@ -24,6 +26,7 @@ class EventListener implements Listener{
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
         if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game){
+            $game->broadcastCustomMessage(TextFormat::RED . $player->getName() . " disconnected!");
             $game->removePlayer($player);
         }
     }
@@ -88,6 +91,19 @@ class EventListener implements Listener{
                 if($event->getCause() == $event::CAUSE_FALL){
                     $event->cancel();
                     return;
+                }
+                if($event instanceof EntityDamageByEntityEvent) {
+                    if (($damager = $event->getDamager()) instanceof Player && $game->isInGame($damager))
+                        $game->playerinfo[strtolower($player->getName())]["damager"] = $damager;
+                        TheBridge::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(
+                            function() use($player, $game){
+                                $game->playerinfo[strtolower($player->getName())]["damager"] = null;
+                            }
+                        ), 20 * 5);
+                    if ($event->getFinalDamage() >= $player->getHealth()) {
+                        $game->handleDeath($player, $event);
+                        $event->cancel();
+                    }
                 }
             }
         }

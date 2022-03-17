@@ -7,6 +7,7 @@ use pocketmine\command\CommandSender;
 use SandhyR\TheBridge\command\subcommands\CreateSubCommand;
 use SandhyR\TheBridge\command\subcommands\HelpSubCommand;
 use SandhyR\TheBridge\command\subcommands\JoinSubCommand;
+use SandhyR\TheBridge\command\subcommands\QuitSubCommand;
 use SandhyR\TheBridge\command\subcommands\RandomJoinSubCommand;
 use SandhyR\TheBridge\command\subcommands\ReloadSubCommand;
 use SandhyR\TheBridge\command\subcommands\SetGoalSubCommand;
@@ -25,6 +26,7 @@ class TheBridgeCommand extends BaseCommand{
         $this->registerSubCommand(new JoinSubCommand("join", "Join to arena"));
         $this->registerSubCommand(new RandomJoinSubCommand("random", "Random join to arena"));
         $this->registerSubCommand(new ReloadSubCommand("reload", "Reload arenas"));
+        $this->registerSubCommand(new QuitSubCommand("quit", "Quit from arena"));
     }
 
     /**
