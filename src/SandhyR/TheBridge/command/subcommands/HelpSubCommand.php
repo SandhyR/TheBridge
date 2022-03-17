@@ -22,7 +22,6 @@ class HelpSubCommand extends BaseSubCommand{
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         $sender->sendMessage("TheBridge §aCommands");
-        $sender->sendMessage(TextFormat::GREEN . "/thebridge list " . TextFormat::YELLOW . "Display list of loaded games");
         $sender->sendMessage(TextFormat::GREEN . "/thebridge create " . TextFormat::YELLOW . "Create new game");
         $sender->sendMessage(TextFormat::GREEN . "/thebridge delete " . TextFormat::YELLOW . "Delete existing game");
         $sender->sendMessage(TextFormat::GREEN . "/thebridge quit " . TextFormat::YELLOW . "leave of a game");
