@@ -80,8 +80,9 @@ class Game
      * @param Vector3|null $redgoal
      * @param string|null $worldname
      * @param string|null $arenaname
+     * @param Position|null $hub
      */
-    public function __construct(?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null)
+    public function __construct(?Vector3 $bluespawn = null, ?Vector3 $redspawn = null, ?Vector3 $bluegoal = null, ?Vector3 $redgoal = null, ?string $worldname = null, ?string $arenaname = null, ?Position $hub = null)
     {
         $this->arenainfo["bluespawn"] = $bluespawn;
         $this->arenainfo["redspawn"] = $redspawn;
@@ -89,6 +90,7 @@ class Game
         $this->arenainfo["redgoal"] = $redgoal;
         $this->arenainfo["worldname"] = $worldname;
         $this->arenainfo["arenaname"] = $arenaname;
+        $this->arenainfo["hub"] = $hub;
         if ($this->isValidArena()) {
             $this->startArena();
         }
@@ -99,7 +101,7 @@ class Game
      */
     public function isValidArena(): bool
     {
-        if (($this->arenainfo["bluespawn"] instanceof Vector3) and ($this->arenainfo["redspawn"] instanceof Vector3) and ($this->arenainfo["bluegoal"] instanceof Vector3) and ($this->arenainfo["redgoal"] instanceof Vector3) and (is_string($this->arenainfo["worldname"]) and (is_string($this->arenainfo["arenaname"])))) {
+        if (($this->arenainfo["bluespawn"] instanceof Vector3) and ($this->arenainfo["redspawn"] instanceof Vector3) and ($this->arenainfo["bluegoal"] instanceof Vector3) and ($this->arenainfo["redgoal"] instanceof Vector3) and (is_string($this->arenainfo["worldname"]) and (is_string($this->arenainfo["arenaname"]))) and ($this->arenainfo["hub"] instanceof Position)) {
             return true;
         }
         return false;
@@ -157,7 +159,9 @@ class Game
     {
         $arr = [];
         foreach ($this->arenainfo as $i => $k) {
-            if ($k instanceof Vector3) {
+            if ($k instanceof Position) {
+                $arr[$i] = Utils::PositionToString($k);
+            } elseif ($k instanceof Vector3) {
                 $arr[$i] = Utils::vectorToString($k);
             } else {
                 $arr[$i] = $k;
@@ -408,7 +412,7 @@ class Game
         }
         foreach ($this->players as $player) {
             if ($player->isOnline()) {
-                $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
+                $player->teleport($this->getHub());
             }
         }
         $this->phase = "OFFLINE";
@@ -416,6 +420,8 @@ class Game
         $this->teams = [];
         $this->task = null;
         $this->players = [];
+        $this->playerinfo = [];
+        $this->timer = 900;
         $this->scoredname = null;
     }
 
@@ -624,5 +630,19 @@ class Game
             }
         }
         $this->respawnPlayer($player, true);
+    }
+
+    /**
+     * @return Position
+     */
+    public function getHub(): Position{
+        return $this->arenainfo["hub"];
+    }
+
+    /**
+     * @return void
+     */
+    public function setHub(Position $pos): void{
+        $this->arenainfo["hub"] = $pos;
     }
 }

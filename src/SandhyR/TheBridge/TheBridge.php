@@ -38,6 +38,10 @@ class TheBridge extends PluginBase{
         foreach (glob($this->getDataFolder() . "arenas/*.json") as $location) {
             $fileContents = file_get_contents($location);
             $json = json_decode($fileContents, true);
+            $worldname = explode(":" ,$json["hub"]);
+            if($worldname !== null) {
+                $this->getServer()->getWorldManager()->loadWorld($worldname[3]);
+            }
             $this->game[$json["arenaname"]] = new Game(Utils::stringToVector(":", $json["bluespawn"]), Utils::stringToVector(":", $json["redspawn"]), Utils::stringToVector(":", $json["bluegoal"]), Utils::stringToVector(":", $json["redgoal"]), $json["worldname"], $json["arenaname"]);
             if(is_string($json["worldname"])) {
                 $this->getServer()->getWorldManager()->loadWorld($json["worldname"]);

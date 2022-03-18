@@ -2,9 +2,12 @@
 
 namespace SandhyR\TheBridge\utils;
 
+use pocketmine\item\StringToItemParser;
 use pocketmine\math\Vector3;
 use pocketmine\color\Color;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
 
 class Utils{
 
@@ -90,5 +93,25 @@ class Utils{
     public static function teamToColor(string $team): string{
         $list = ["red" => TextFormat::RED , "blue" => TextFormat::DARK_BLUE];
         return $list[$team];
+    }
+
+    /**
+     * @param Position $position
+     * @return string
+     */
+    public static function PositionToString(Position $position): string{
+        return $position->getX() . ":" . $position->getY() . ":" . $position->getZ() . ":" . $position->getWorld()->getDisplayName();
+    }
+
+    /**
+     * @param string $string
+     * @return Position|null
+     */
+    public static function stringToPosition(string $string): ?Position{
+        if($string !== null) {
+            $split = explode(":", $string);
+            return new Position($split[0], $split[1], $split[2], Server::getInstance()->getWorldManager()->getWorldByName($split[3]));
+        }
+        return null;
     }
 }

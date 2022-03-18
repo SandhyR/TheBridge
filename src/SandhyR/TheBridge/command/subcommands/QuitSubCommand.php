@@ -31,7 +31,7 @@ class QuitSubCommand extends BaseSubCommand{
             if(($game = TheBridge::getInstance()->getPlayerGame($sender)) instanceof Game){
                 $game->removePlayer($sender);
                 ScoreFactory::removeObjective($sender);
-                $sender->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
+                $sender->teleport($game->getHub());
                 $sender->getInventory()->clearAll();
                 $sender->getArmorInventory()->clearAll();
             } else {

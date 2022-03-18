@@ -2,6 +2,7 @@
 
 namespace SandhyR\TheBridge;
 
+use jackmd\scorefactory\ScoreFactory;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -9,8 +10,10 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
@@ -141,6 +144,18 @@ class EventListener implements Listener{
                     $game->scoredname = $player->getName();
                     $game->sendAllCages();
                 }
+            }
+        }
+    }
+
+    public function onUse(PlayerItemUseEvent $event){
+        $player = $event->getPlayer();
+        if(($game = TheBridge::getInstance()->getPlayerGame($player)) instanceof Game) {
+            if($event->getItem()->getId() == ItemIds::BED){
+                $game->removePlayer($player);
+                ScoreFactory::removeObjective($player);
+                $player->teleport($game->getHub());
+                $player->getInventory()->clearAll();
             }
         }
     }
