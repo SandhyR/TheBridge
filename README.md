@@ -9,6 +9,7 @@ Command | Description | Permission
 `/tb setspawn` | Set position of spawn position a team. | thebridge.set
 `/tb setgoal` | Set position of goal a team. | thebridge.set
 `/tb setworld` | Set world name of arena. | thebridge.set
+`/tb sethub` | Set hub position. | thebridge.set
 `/tb reload` | Reload all arena. | thebridge.set
 
 ## Features
