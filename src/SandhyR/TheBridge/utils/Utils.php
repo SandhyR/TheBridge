@@ -2,7 +2,6 @@
 
 namespace SandhyR\TheBridge\utils;
 
-use pocketmine\item\StringToItemParser;
 use pocketmine\math\Vector3;
 use pocketmine\color\Color;
 use pocketmine\Server;
@@ -104,10 +103,10 @@ class Utils{
     }
 
     /**
-     * @param string $string
+     * @param string|null $string
      * @return Position|null
      */
-    public static function stringToPosition(string $string): ?Position{
+    public static function stringToPosition(?string $string): ?Position{
         if($string !== null) {
             $split = explode(":", $string);
             return new Position($split[0], $split[1], $split[2], Server::getInstance()->getWorldManager()->getWorldByName($split[3]));

@@ -15,7 +15,6 @@ use pocketmine\item\ItemIds;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
-use pocketmine\scheduler\ClosureTask;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
 use pocketmine\utils\Config;
