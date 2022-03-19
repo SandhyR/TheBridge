@@ -71,8 +71,16 @@ class Utils{
      * @param int $goal
      * @return string
      */
-    public static function intToPoint(int $goal): string{
-        return str_repeat(TextFormat::GREEN . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
+    public static function RintToPoint(int $goal): string{
+        return str_repeat(TextFormat::RED . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
+    }
+    
+    /**
+     * @param int $goal
+     * @return string
+     */
+    public static function BintToPoint(int $goal): string{
+        return str_repeat(TextFormat::DARK_BLUE . "§l●", $goal) . str_repeat(TextFormat::GRAY . "§l●", 5 - $goal);
     }
 
     /**
