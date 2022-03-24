@@ -1,5 +1,10 @@
 # TheBridge
-A  TheBridge Plugin For PocketMine-MP
+TheBridge PocketMine Plugin
+
+# Whats TheBridge?
+The Bridge is a minigame. It is a type of duel which involves 2 teams attempting to score goals on the opposite side by crossing a 1 block-wide bridge while attempting to protect their own goal.
+
+# Commands
 Command | Description | Permission
 --- | --- | ---
 `/tb create` | Create new arena. | thebridge.set
@@ -17,3 +22,19 @@ Command | Description | Permission
 - [X] In-Game scoreboard
 - [X] Configurable
 - [ ] Save Kills, Wins, Goals in Database
+
+## Suggestions from Github Users
+- [ ] Cosmetics
+- [ ] Custom kit/Custom in-game inventory
+- [ ] In-Game BossBar
+- [ ] Doubles/2V2
+- [ ] SpectatorCore
+- [ ] Api/getKills/getWins of a player
+- [ ] Xp and coins after wining or killing a player
+
+# Issues or suggestions 
+found an error or wanna suggest a features that sould be Added
+you can at Issues Tab (Note: you need to be signed into github!)
+
+# Author:
+- SandhyR
