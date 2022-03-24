@@ -13,9 +13,7 @@ Command | Description | Permission
 `/tb reload` | Reload all arena. | thebridge.set
 
 ## Features
-- All basics of TheBridge game
-- In-Game scoreboard
-- Configurable
-
-## TODO
+- [X] All basics of TheBridge game
+- [X] In-Game scoreboard
+- [X] Configurable
 - [ ] Save Kills, Wins, Goals in Database
