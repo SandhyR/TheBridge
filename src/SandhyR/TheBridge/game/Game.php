@@ -334,11 +334,10 @@ class Game
         }
         $this->players[strtolower($player->getName())] = $player;
         $this->playerinfo[strtolower($player->getName())] = ["kills" => 0, "goals" => 0, "damager" => null];
+        $this->clearInventory();
         $player->setGamemode(GameMode::ADVENTURE());
         $this->setTeam($player);
         $player->teleport(Position::fromObject($this->arenainfo[$this->getTeam($player) . "spawn"], Server::getInstance()->getWorldManager()->getWorldByName($this->arenainfo["worldname"])));
-        $player->getInventory()->clearAll();
-        $player->getArmorInventory()->clearAll();
         $player->setHealth(20);
         $player->getHungerManager()->setFood(20);
         $player->getInventory()->setItem(8, VanillaItems::WHITE_BED()->setCustomName("Leave"));
@@ -394,6 +393,13 @@ class Game
     {
         unset($this->players[strtolower($player->getName())], $this->teams[strtolower($player->getName())]);
         $this->checkCountdown();
+        $this->clearInventory();
+    }
+    
+    public function clearInventory(Player $player)
+    {
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
     }
 
 
