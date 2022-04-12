@@ -396,7 +396,7 @@ class Game
         $this->clearInventory();
     }
     
-    public function clearInventory(): void
+    public function clearInventory($player): void
     {
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();
