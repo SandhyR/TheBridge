@@ -11,5 +11,7 @@ projects:
         branch: PM4
       - src: Ifera/ScoreFactory/ScoreFactory
         version: ^3.1.0
+      - src: Muqsit/InvMenu/InvMenu
+        version: ^4.3.9
 
 ...
