@@ -14,6 +14,7 @@ use pocketmine\data\bedrock\DyeColorIdMap;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\VanillaItems;
+use pocketmine\item\Armor;
 
 class TheBridgeKit extends Kit {
 
