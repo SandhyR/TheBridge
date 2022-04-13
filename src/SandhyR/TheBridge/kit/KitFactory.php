@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace SandhyR\TheBridge\kit;
 
+use SandhyR\TheBridge\kit\Kit;
 
 class KitFactory {
 
