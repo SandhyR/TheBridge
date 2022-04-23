@@ -117,7 +117,7 @@ class Utils{
     public static function stringToPosition(?string $string): ?Position{
         if($string !== null) {
             $split = explode(":", $string);
-            return new Position($split[0], $split[1], $split[2], Server::getInstance()->getWorldManager()->getWorldByName($split[3]));
+            return new Position((float)$split[0], (float)$split[1], (float)$split[2], Server::getInstance()->getWorldManager()->getWorldByName((string)$split[3]));
         }
         return null;
     }
