@@ -42,7 +42,7 @@ class TheBridge extends PluginBase{
             if($worldname !== null) {
                 $this->getServer()->getWorldManager()->loadWorld($worldname[3]);
             }
-            $this->game[$json["arenaname"]] = new Game(Utils::stringToVector(":", $json["bluespawn"]), Utils::stringToVector(":", $json["redspawn"]), Utils::stringToVector(":", $json["bluegoal"]), Utils::stringToVector(":", $json["redgoal"]), $json["worldname"], $json["arenaname"]);
+            $this->game[$json["arenaname"]] = new Game(Utils::stringToVector(":", $json["bluespawn"]), Utils::stringToVector(":", $json["redspawn"]), Utils::stringToVector(":", $json["bluegoal"]), Utils::stringToVector(":", $json["redgoal"]), $json["worldname"], $json["arenaname"], Utils::stringToPosition($json["hub"]));
             if(is_string($json["worldname"])) {
                 $this->getServer()->getWorldManager()->loadWorld($json["worldname"]);
             }
@@ -64,7 +64,7 @@ class TheBridge extends PluginBase{
         if($this->getGame($arena) !== null){
             return false;
         }
-        $this->game[$arena] = new Game(null,null,null,null,null, $arena);
+        $this->game[$arena] = new Game(arenaname: $arena);
         return true;
     }
 

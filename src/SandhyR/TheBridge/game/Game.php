@@ -411,6 +411,8 @@ class Game
         }
         foreach ($this->players as $player) {
             if ($player->isOnline()) {
+                $player->getInventory()->clearAll();
+                $player->getArmorInventory()->clearAll();
                 $player->teleport($this->getHub());
             }
         }
