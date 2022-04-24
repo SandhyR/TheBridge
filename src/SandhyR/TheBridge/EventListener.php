@@ -156,6 +156,7 @@ class EventListener implements Listener{
                 ScoreFactory::removeObjective($player);
                 $player->teleport($game->getHub());
                 $player->getInventory()->clearAll();
+                $player->getArmorInventory()->clearAll();
             }
         }
     }

@@ -24,7 +24,7 @@ class JoinSubCommand extends BaseSubCommand{
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         if($sender instanceof Player) {
-            if (TheBridge::getInstance()->getGame($args["arena"]) !== null and TheBridge::getInstance()->getGame($args["arena"])->isRunning()) {
+            if (TheBridge::getInstance()->getGame($args["arena"]) !== null and TheBridge::getInstance()->getGame($args["arena"])->isRunning(true)) {
                 TheBridge::getInstance()->getGame($args["arena"])->addPlayer($sender);
             } else {
                 $sender->sendMessage("Arena " . $args["arena"] . " Not found");

@@ -25,8 +25,9 @@ class RandomJoinSubCommand extends BaseSubCommand{
     {
         if($sender instanceof Player) {
            foreach (TheBridge::getInstance()->getGames() as $game){
-               if($game->isRunning()){
+               if($game->isRunning(true)){
                    $game->addPlayer($sender);
+                   return;
                }
            }
         }
