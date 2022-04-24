@@ -205,7 +205,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 5, "      ");
                         ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
                         ScoreFactory::setScoreLine($player, 7, "    ");
-                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 8, TheBridge::getInstance()->getConfig()->get("server-ip"));
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -222,7 +222,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 5, "  ");
                         ScoreFactory::setScoreLine($player, 6, "Mode: " . TextFormat::GREEN . "Solo");
                         ScoreFactory::setScoreLine($player, 7, " ");
-                        ScoreFactory::setScoreLine($player, 8, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 8, TheBridge::getInstance()->getConfig()->get("server-ip"));
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -256,7 +256,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 9, TextFormat::WHITE . "Map: §a" . $this->arenainfo["arenaname"]);
                         ScoreFactory::setScoreLine($player, 10, TextFormat::WHITE . "Mode: §aSolo");
                         ScoreFactory::setScoreLine($player, 11, " ");
-                        ScoreFactory::setScoreLine($player, 12, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 12, TheBridge::getInstance()->getConfig()->get("server-ip"));
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }
@@ -292,7 +292,7 @@ class Game
                         ScoreFactory::setScoreLine($player, 9, TextFormat::WHITE . "Map: §a" . $this->arenainfo["arenaname"]);
                         ScoreFactory::setScoreLine($player, 10, TextFormat::WHITE . "Mode: §aSolo");
                         ScoreFactory::setScoreLine($player, 11, " ");
-                        ScoreFactory::setScoreLine($player, 12, TextFormat::YELLOW . "play.yourservername.com");
+                        ScoreFactory::setScoreLine($player, 12, TheBridge::getInstance()->getConfig()->get("server-ip"));
                         ScoreFactory::sendObjective($player);
                         ScoreFactory::sendLines($player);
                     }

@@ -32,6 +32,7 @@ class TheBridge extends PluginBase{
         if (!PacketHooker::isRegistered()) {
             PacketHooker::register($this);
         }
+        $this->saveDefaultConfig();
         @mkdir($this->getDataFolder() . "arenas/");
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getCommandMap()->register("thebridge", new TheBridgeCommand($this, "thebridge", "TheBridge Command", ["tb"]));
