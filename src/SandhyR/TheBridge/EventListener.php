@@ -129,6 +129,11 @@ class EventListener implements Listener{
             if($game->phase !== "RUNNING"){
                 return;
             }
+            if($player->getPosition()->getY() <= 1){
+                $event->cancel();
+                $game->respawnPlayer($player, true);
+                return;
+            }
             /** @var Vector3 $owngoal */
             $owngoal = $game->getPureArenaInfo()[$game->getTeam($player) . "goal"];
             /** @var Vector3 $enemygoal */

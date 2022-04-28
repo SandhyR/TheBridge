@@ -2,9 +2,8 @@
 <project version="4">
   <component name="PhpIncludePathManager">
     <include_path>
-      <path value="$PROJECT_DIR$/../../../PMMP/PocketMine-MP" />
+      <path value="$PROJECT_DIR$/../../PocketMine" />
       <path value="$PROJECT_DIR$/../../virions/Commando" />
-      <path value="$PROJECT_DIR$/../../virions/ScoreFactory" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />
